@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Study Buddy AI</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f1f5f9;
+}
+
+/* Header */
+.header {
+    height: 60px;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: #1e293b;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+}
+
+.menu-item {
+    padding: 10px;
+    margin-top: 10px;
+    background: #334155;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background: #475569;
+}
+
+/* Chat Area */
+.chat-area {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+}
+
+/* Messages */
+.chat-box {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.message {
+    max-width: 70%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.user {
+    background: #2563eb;
+    color: white;
+    margin-left: auto;
+}
+
+.bot {
+    background: #e2e8f0;
+    color: black;
+}
+
+/* Input */
+.input-area {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.input-area button {
+    margin-left: 10px;
+    padding: 12px 18px;
+    background: #2563eb;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.input-area button:hover {
+    background: #1d4ed8;
+}
+
+/* Info Panel */
+.info-panel {
+    width: 250px;
+    background: #f8fafc;
+    padding: 20px;
+    border-left: 1px solid #ddd;
+}
+
+.info-panel h3 {
+    margin-top: 0;
+}
+
+.info-box {
+    background: #e0f2fe;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    Study Buddy AI
+</div>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Menu</h3>
+        <div class="menu-item" onclick="clearChat()">New Chat</div>
+        <div class="menu-item">Subjects</div>
+        <div class="menu-item">History</div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area">
+
+        <div id="chat-box" class="chat-box"></div>
+
+        <div class="input-area">
+            <input type="text" id="message" placeholder="Ask any academic question..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <h3>About</h3>
+        <div class="info-box">
+            Helps students understand concepts clearly.
+        </div>
+
+        <div class="info-box">
+            Supports DBMS, SQL, and core subjects.
+        </div>
+
+        <div class="info-box">
+            Provides simple explanations with examples.
+        </div>
+    </div>
+
+</div>
+
+<script>
+function addMessage(text, sender) {
+    let chatBox = document.getElementById("chat-box");
+
+    let msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    msg.innerText = text;
+
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function sendMessage() {
+    let input = document.getElementById("message");
+    let text = input.value;
+
+    if (!text) return;
+
+    addMessage(text, "user");
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+        addMessage(data.response, "bot");
+    });
+
+    input.value = "";
+}
+
+document.getElementById("message").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
+
+function clearChat() {
+    document.getElementById("chat-box").innerHTML = "";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+Normalization organizes data to reduce redundancy.
+ACID properties are Atomicity, Consistency, Isolation, Durability.
+Primary key uniquely identifies each record in a table.
+Database is a structured collection of data.
+DBMS stands for Database Management System.
